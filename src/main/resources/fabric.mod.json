@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "lemclienthelper",
+  "version": "0.0.8-1.18",
+  "name": "LEM Client Helper",
+  "description": "LEM Client Helper",
+  "authors": [
+    "kyrptonaught"
+  ],
+  "contact": {
+    "homepage": "https://github.com/kyrptonaught/lemclienthelper",
+    "sources": "https://github.com/kyrptonaught/lemclienthelper"
+  },
+  "license": "MIT",
+  "icon": "assets/lemclienthelper/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.kyrptonaught.lemclienthelper.LEMClientHelperMod"
+    ],
+    "modmenu": [
+      "net.kyrptonaught.lemclienthelper.config.ModMenuIntegration"
+    ]
+  },
+  "accessWidener": "lemclienthelper.accesswidener",
+  "mixins": [
+    {
+      "config": "lemclienthelper.mixins.json",
+      "environment": "client"
+    }
+  ]
+}
