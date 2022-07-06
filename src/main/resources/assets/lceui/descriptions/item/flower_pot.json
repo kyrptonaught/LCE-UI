@@ -1,0 +1,7 @@
+{
+  "model": "item/flower_pot",
+  "text": {
+    "name": "item.minecraft.flower_pot",
+    "description": "item.minecraft.flower_pot.description"
+  }
+}

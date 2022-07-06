@@ -1,0 +1,7 @@
+{
+  "model": "item/crimson_sign",
+  "text": {
+    "name": "block.minecraft.crimson_sign",
+    "description": "block.minecraft.sign.description"
+  }
+}

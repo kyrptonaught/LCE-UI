@@ -1,0 +1,7 @@
+{
+  "model": "item/light",
+  "text": {
+    "name": "block.minecraft.light",
+    "description": "block.minecraft.light.description"
+  }
+}

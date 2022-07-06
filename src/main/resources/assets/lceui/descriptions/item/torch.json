@@ -1,0 +1,7 @@
+{
+  "model": "item/torch",
+  "text": {
+    "name": "block.minecraft.torch",
+    "description": "block.minecraft.torch.description"
+  }
+}

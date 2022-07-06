@@ -1,0 +1,7 @@
+{
+  "model": "item/oak_sign",
+  "text": {
+    "name": "block.minecraft.oak_sign",
+    "description": "block.minecraft.sign.description"
+  }
+}
