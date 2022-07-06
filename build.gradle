@@ -32,7 +32,7 @@ repositories {
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/lemclienthelper.accesswidener")
+	accessWidenerPath = file("src/main/resources/lceui.accesswidener")
 }
 
 dependencies {
@@ -43,10 +43,6 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	//modImplementation "dev.lambdaurora:lambdacontrols:1.7.1+1.17"
-	optionalDependency('eu.midnightdust:midnightcontrols:1.0.0-1.18')
-
 
 	modImplementation('net.kyrptonaught:kyrptconfig:1.4.5-1.18')
 	include('net.kyrptonaught:kyrptconfig:1.4.5-1.18')

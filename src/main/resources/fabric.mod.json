@@ -1,31 +1,31 @@
 {
   "schemaVersion": 1,
-  "id": "lemclienthelper",
-  "version": "0.0.8-1.18",
-  "name": "LEM Client Helper",
-  "description": "LEM Client Helper",
+  "id": "lceui",
+  "version": "0.0.1-1.18",
+  "name": "Legacy Console UI",
+  "description": "Legacy Console UI",
   "authors": [
     "kyrptonaught"
   ],
   "contact": {
-    "homepage": "https://github.com/kyrptonaught/lemclienthelper",
-    "sources": "https://github.com/kyrptonaught/lemclienthelper"
+    "homepage": "https://github.com/kyrptonaught/lceui",
+    "sources": "https://github.com/kyrptonaught/lceui"
   },
   "license": "MIT",
-  "icon": "assets/lemclienthelper/icon.png",
+  "icon": "assets/lceui/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
-      "net.kyrptonaught.lemclienthelper.LEMClientHelperMod"
+      "net.kyrptonaught.lceui.LCEUIMod"
     ],
     "modmenu": [
-      "net.kyrptonaught.lemclienthelper.config.ModMenuIntegration"
+      "net.kyrptonaught.lceui.config.ModMenuIntegration"
     ]
   },
-  "accessWidener": "lemclienthelper.accesswidener",
+  "accessWidener": "lceui.accesswidener",
   "mixins": [
     {
-      "config": "lemclienthelper.mixins.json",
+      "config": "lceui.mixins.json",
       "environment": "client"
     }
   ]

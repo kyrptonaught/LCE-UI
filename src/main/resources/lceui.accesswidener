@@ -1,0 +1,5 @@
+accessWidener	v1	named
+
+# title screen
+mutable field net/minecraft/client/gui/screen/TitleScreen backgroundRenderer Lnet/minecraft/client/gui/RotatingCubeMapRenderer;
+accessible field net/minecraft/client/gui/screen/TitleScreen backgroundRenderer Lnet/minecraft/client/gui/RotatingCubeMapRenderer;
