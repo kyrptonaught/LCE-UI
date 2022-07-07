@@ -1,7 +1,7 @@
 {
-  "model": "item/flower_pot",
+  "model": "item/acacia_boat",
   "text": {
     "name": "item.minecraft.flower_pot",
-    "description": "item.minecraft.flower_pot.description"
+    "description": "I am a flower pot in your inventory"
   }
 }

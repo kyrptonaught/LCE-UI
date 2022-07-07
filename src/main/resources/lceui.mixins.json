@@ -3,7 +3,8 @@
   "package": "net.kyrptonaught.lceui.mixin",
   "compatibilityLevel": "JAVA_16",
   "client": [
-    "titlescreen.TitleScreenMixin"
+    "titlescreen.TitleScreenMixin",
+    "whatsthis.HandledScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

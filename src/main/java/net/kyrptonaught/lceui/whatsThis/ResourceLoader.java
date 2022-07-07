@@ -11,7 +11,6 @@ import net.minecraft.util.Identifier;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
-import java.util.Objects;
 
 public class ResourceLoader implements SimpleSynchronousResourceReloadListener {
     public static final Identifier ID = new Identifier("lceui", "descriptions");
@@ -24,16 +23,21 @@ public class ResourceLoader implements SimpleSynchronousResourceReloadListener {
 
     @Override
     public void reload(ResourceManager manager) {
-        WhatsThisInit.blockDescriptions.clear();
-        Collection<Identifier> resources = manager.findResources(ID.getPath() + "/block", (string) -> string.endsWith(".json"));
+        WhatsThisInit.itemDescriptions.clear();
+        Collection<Identifier> resources = manager.findResources(ID.getPath(), (string) -> string.endsWith(".json"));
         for (Identifier id : resources) {
-            if (id.getNamespace().equals(ID.getNamespace()))
+            if (id.getNamespace().equals(ID.getNamespace()) && id.getPath().contains("/block") || id.getPath().contains("/item"))
                 try {
                     JsonObject jsonObj = (JsonObject) JsonParser.parseReader(new InputStreamReader(manager.getResource(id).getInputStream()));
-                    BlockDescription blockDescription = GSON.fromJson(jsonObj, BlockDescription.class);
+                    ItemDescription itemDescription = GSON.fromJson(jsonObj, ItemDescription.class);
                     String fileName = id.getPath().substring(id.getPath().lastIndexOf("/") + 1).replace(".json", "");
+                    if (id.getPath().contains("/block"))
+                        fileName = "block/" + fileName;
+                    else if (id.getPath().contains("/item"))
+                        fileName = "item/" + fileName;
+
                     Identifier name = new Identifier(fileName);
-                    WhatsThisInit.blockDescriptions.put(name, blockDescription);
+                    WhatsThisInit.itemDescriptions.put(name, itemDescription);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

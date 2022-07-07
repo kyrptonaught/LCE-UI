@@ -1,0 +1,7 @@
+{
+  "parent" : "block/acacia_sapling",
+  "model" : "item/acacia_boat",
+  "text" : {
+    "name" : "Oak"
+  }
+}

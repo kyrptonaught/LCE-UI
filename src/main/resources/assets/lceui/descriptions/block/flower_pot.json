@@ -1,3 +1,6 @@
 {
-  "parent": "item/flower_pot"
+  "parent": "item/flower_pot",
+  "text": {
+    "description": "I am a flower pot on the ground"
+  }
 }
