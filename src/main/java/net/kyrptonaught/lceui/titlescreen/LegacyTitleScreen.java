@@ -1,6 +1,7 @@
 package net.kyrptonaught.lceui.titlescreen;
 
 
+import net.kyrptonaught.lceui.LCEUIMod;
 import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
@@ -10,7 +11,7 @@ import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class LegacyTitleScreen extends TitleScreen {
-    public static final LegacyPanoramaRenderer PANORAMA_CUBE_MAP = new LegacyPanoramaRenderer(new Identifier("lemclienthelper:textures/gui/title/background/69/day/69_day_large.png"));
+    public static final LegacyPanoramaRenderer PANORAMA_CUBE_MAP = new LegacyPanoramaRenderer(new Identifier(LCEUIMod.MOD_ID, "textures/gui/title/background/69/day/69_day_large.png"));
 
     public LegacyTitleScreen() {
         super(false);

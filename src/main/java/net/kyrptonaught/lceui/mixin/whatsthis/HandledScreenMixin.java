@@ -2,6 +2,7 @@ package net.kyrptonaught.lceui.mixin.whatsthis;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.kyrptonaught.lceui.whatsThis.DescriptionInstance;
 import net.kyrptonaught.lceui.whatsThis.DescriptionRenderer;
 import net.kyrptonaught.lceui.whatsThis.WhatsThisInit;
 import net.minecraft.client.gui.screen.Screen;
@@ -34,7 +35,7 @@ public class HandledScreenMixin extends Screen {
             return;
         if (WhatsThisInit.isKeybindPressed(button, InputUtil.Type.MOUSE)) {
             if (focusedSlot != null && !focusedSlot.getStack().isEmpty()) {
-                DescriptionRenderer.setToRender(focusedSlot.getStack());
+                DescriptionRenderer.setToRender(DescriptionInstance.ofItem(focusedSlot.getStack()),true);
             }
             callbackInfoReturnable.setReturnValue(true);
         }
@@ -46,7 +47,7 @@ public class HandledScreenMixin extends Screen {
             return;
         if (WhatsThisInit.isKeybindPressed(keycode, InputUtil.Type.KEYSYM)) {
             if (focusedSlot != null && !focusedSlot.getStack().isEmpty()) {
-                DescriptionRenderer.setToRender(focusedSlot.getStack());
+                DescriptionRenderer.setToRender(DescriptionInstance.ofItem(focusedSlot.getStack()),true);
             }
             callbackInfoReturnable.setReturnValue(true);
         }

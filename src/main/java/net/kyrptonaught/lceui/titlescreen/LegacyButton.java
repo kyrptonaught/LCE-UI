@@ -1,6 +1,7 @@
 package net.kyrptonaught.lceui.titlescreen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.kyrptonaught.lceui.LCEUIMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -12,7 +13,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 public class LegacyButton extends ButtonWidget {
-    public static final Identifier WIDGETS_TEXTURE = new Identifier("lemclienthelper:textures/gui/legacy_gui.png");
+    public static final Identifier WIDGETS_TEXTURE = new Identifier(LCEUIMod.MOD_ID, "textures/gui/legacy_gui.png");
 
     public LegacyButton(int x, int y, int width, int height, Text message, PressAction onPress) {
         super(x, y, width, height, message, onPress);

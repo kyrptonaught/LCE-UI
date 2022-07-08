@@ -1,7 +1,0 @@
-{
-  "model": "item/spruce_sign",
-  "text": {
-    "name": "block.minecraft.spruce_sign",
-    "description": "block.minecraft.sign.description"
-  }
-}

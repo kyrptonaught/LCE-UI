@@ -1,7 +1,0 @@
-{
-  "model": "item/birch_sign",
-  "text": {
-    "name": "block.minecraft.birch_sign",
-    "description": "block.minecraft.sign.description"
-  }
-}

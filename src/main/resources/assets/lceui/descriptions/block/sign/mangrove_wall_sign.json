@@ -1,7 +1,0 @@
-{
-  "model": "item/mangrove_sign",
-  "text": {
-    "name": "block.minecraft.mangrove_sign",
-    "description": "block.minecraft.sign.description"
-  }
-}

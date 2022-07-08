@@ -5,12 +5,15 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.format.SignStyle;
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public class ResourceLoader implements SimpleSynchronousResourceReloadListener {
     public static final Identifier ID = new Identifier("lceui", "descriptions");
@@ -41,6 +44,15 @@ public class ResourceLoader implements SimpleSynchronousResourceReloadListener {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+        }
+    }
+
+    public static void loadModels(ResourceManager manager, Consumer<Identifier> out) {
+        Collection<Identifier> resources = manager.findResources("models/item", (string) -> string.endsWith(".json"));
+        for (Identifier id : resources) {
+            if (id.getNamespace().equals(ID.getNamespace())) {
+                out.accept(new ModelIdentifier(WhatsThisInit.getCleanIdentifier(id), "inventory"));
+            }
         }
     }
 }

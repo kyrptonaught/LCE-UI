@@ -1,7 +1,0 @@
-{
-  "model": "item/jungle_sign",
-  "text": {
-    "name": "block.minecraft.jungle_sign",
-    "description": "block.minecraft.sign.description"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "model": "item/acacia_sign",
-  "text": {
-    "name": "block.minecraft.acacia_sign",
-    "description": "block.minecraft.sign.description"
-  }
-}
