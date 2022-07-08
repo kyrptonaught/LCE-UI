@@ -35,7 +35,7 @@ public class HandledScreenMixin extends Screen {
             return;
         if (WhatsThisInit.isKeybindPressed(button, InputUtil.Type.MOUSE)) {
             if (focusedSlot != null && !focusedSlot.getStack().isEmpty()) {
-                DescriptionRenderer.setToRender(DescriptionInstance.ofItem(focusedSlot.getStack()),true);
+                DescriptionRenderer.setToRender(DescriptionInstance.ofItem(focusedSlot.getStack()), true);
             }
             callbackInfoReturnable.setReturnValue(true);
         }
@@ -47,7 +47,7 @@ public class HandledScreenMixin extends Screen {
             return;
         if (WhatsThisInit.isKeybindPressed(keycode, InputUtil.Type.KEYSYM)) {
             if (focusedSlot != null && !focusedSlot.getStack().isEmpty()) {
-                DescriptionRenderer.setToRender(DescriptionInstance.ofItem(focusedSlot.getStack()),true);
+                DescriptionRenderer.setToRender(DescriptionInstance.ofItem(focusedSlot.getStack()), true);
             }
             callbackInfoReturnable.setReturnValue(true);
         }

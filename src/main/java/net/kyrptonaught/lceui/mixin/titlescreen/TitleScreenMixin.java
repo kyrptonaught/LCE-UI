@@ -1,7 +1,5 @@
 package net.kyrptonaught.lceui.mixin.titlescreen;
 
-import net.kyrptonaught.lceui.titlescreen.LegacyTitleScreen;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

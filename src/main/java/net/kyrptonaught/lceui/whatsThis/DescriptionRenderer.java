@@ -2,10 +2,7 @@ package net.kyrptonaught.lceui.whatsThis;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.kyrptonaught.lceui.LCEUIMod;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
@@ -18,19 +15,11 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.texture.TextureManager;
-import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.registry.Registry;
 
 import java.util.List;
 
@@ -94,7 +83,7 @@ public class DescriptionRenderer {
         int lineHeight = 33 + (description.size() * 11);
 
         int totalHeight = lineHeight + 7;
-        if(displayModel)totalHeight = lineHeight + 15 + 20;
+        if (displayModel) totalHeight = lineHeight + 15 + 20;
 
         renderBackground(matrixStack, x, y, 200 + 20, totalHeight);
 
