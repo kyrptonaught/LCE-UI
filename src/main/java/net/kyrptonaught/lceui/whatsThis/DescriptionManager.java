@@ -45,7 +45,7 @@ public class DescriptionManager {
         id = new Identifier(id.getNamespace(), "entity/" + id.getPath());
         ItemDescription blockDescription = itemDescriptions.getOrDefault(id, new ItemDescription());
 
-        return getDescription(id, blockDescription, entity.getTranslationKey());
+        return getDescription(id, blockDescription, entity.getTranslationKey(), false);
     }
 
     public ItemDescription getDescriptionForBlock(BlockState blockState) {
@@ -53,7 +53,7 @@ public class DescriptionManager {
         id = new Identifier(id.getNamespace(), "block/" + id.getPath());
         ItemDescription blockDescription = itemDescriptions.getOrDefault(id, new ItemDescription());
 
-        return getDescription(id, blockDescription, blockState.getBlock().getTranslationKey());
+        return getDescription(id, blockDescription, blockState.getBlock().getTranslationKey(), true);
     }
 
     public ItemDescription getDescriptionForItem(ItemStack itemStack) {
@@ -61,10 +61,10 @@ public class DescriptionManager {
         id = new Identifier(id.getNamespace(), "item/" + id.getPath());
         ItemDescription itemDescription = itemDescriptions.getOrDefault(id, new ItemDescription());
 
-        return getDescription(id, itemDescription, itemStack.getTranslationKey());
+        return getDescription(id, itemDescription, itemStack.getTranslationKey(), true);
     }
 
-    private ItemDescription getDescription(Identifier itemID, ItemDescription itemDescription, String defaultKey) {
+    private ItemDescription getDescription(Identifier itemID, ItemDescription itemDescription, String defaultKey, Boolean defaultIconDisplay) {
         tryInherit(itemID, itemDescription, new HashSet<>());
 
         if (itemDescription.isFieldBlank(itemDescription.text.name)) {
@@ -74,7 +74,7 @@ public class DescriptionManager {
             itemDescription.text.description = defaultKey + ".description";
         }
         if (itemDescription.displaysicon == null)
-            itemDescription.displaysicon = true;
+            itemDescription.displaysicon = defaultIconDisplay;
 
         if (itemDescription.isFieldBlank(itemDescription.group)) {
             itemDescription.group = findTagForID(itemID).orElse(itemID.toString());
