@@ -16,7 +16,7 @@ public class ViewedBlockArgumentType extends IdentifierArgumentType {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
-        for (String identifier : WhatsThisInit.viewedBlocks) {
+        for (String identifier : WhatsThisInit.descriptionManager.viewedDescriptions) {
             builder.suggest(identifier);
         }
         return builder.buildFuture();

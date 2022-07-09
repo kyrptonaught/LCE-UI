@@ -1,4 +1,7 @@
 {
   "key.categories.lceui": "LCE UI",
-  "key.lceui.whatsthis": "Whats This?"
+  "key.lceui.whatsthis": "Whats This?",
+  "key.lceui.whatsthis.feedback.clearall": "Cleared %s entries",
+  "key.lceui.whatsthis.feedback.cleared": "Cleared %s",
+  "key.lceui.whatsthis.feedback.notfound": "Entry %s not found"
 }

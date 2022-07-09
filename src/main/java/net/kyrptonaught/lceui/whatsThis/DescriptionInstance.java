@@ -2,6 +2,8 @@ package net.kyrptonaught.lceui.whatsThis;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.entity.Entity;
@@ -18,9 +20,12 @@ public class DescriptionInstance {
     private ItemDescription displayDescription;
     private BakedModel displayModel;
 
+    private Screen boundToScreen;
+    private int openTicks = 140;
+
 
     public static DescriptionInstance ofItem(ItemStack stack) {
-        return ofItem(stack, WhatsThisInit.getDescriptionForItem(stack));
+        return ofItem(stack, WhatsThisInit.descriptionManager.getDescriptionForItem(stack));
     }
 
     public static DescriptionInstance ofItem(ItemStack stack, ItemDescription itemDescription) {
@@ -31,7 +36,7 @@ public class DescriptionInstance {
     }
 
     public static DescriptionInstance ofEntity(Entity entity) {
-        return ofEntity(entity, WhatsThisInit.getDescriptionForEntity(entity.getType()));
+        return ofEntity(entity, WhatsThisInit.descriptionManager.getDescriptionForEntity(entity.getType()));
     }
 
     public static DescriptionInstance ofEntity(Entity entity, ItemDescription itemDescription) {
@@ -42,7 +47,7 @@ public class DescriptionInstance {
     }
 
     public static DescriptionInstance ofBlock(World world, BlockPos pos, BlockState blockState) {
-        return ofBlock(world, pos, blockState, WhatsThisInit.getDescriptionForBlock(blockState));
+        return ofBlock(world, pos, blockState, WhatsThisInit.descriptionManager.getDescriptionForBlock(blockState));
     }
 
     public static DescriptionInstance ofBlock(World world, BlockPos pos, BlockState blockState, ItemDescription itemDescription) {
@@ -53,6 +58,28 @@ public class DescriptionInstance {
             itemStack = blockState.getBlock().getPickStack(world, pos, blockState);
 
         return ofItem(itemStack, itemDescription);
+    }
+
+    public DescriptionInstance bindToScreen(Screen screen) {
+        this.boundToScreen = screen;
+        return this;
+    }
+
+    public void tickOpen() {
+        openTicks--;
+    }
+
+    public boolean shouldHide(MinecraftClient client) {
+        return client.options.debugEnabled;
+    }
+
+    public boolean shouldClose(MinecraftClient client) {
+        if (openTicks <= 0) return true;
+
+        if (boundToScreen == null) {
+            return client.currentScreen instanceof HandledScreen<?>;
+        }
+        return !boundToScreen.equals(client.currentScreen);
     }
 
     public String getGroupKey() {
@@ -72,7 +99,7 @@ public class DescriptionInstance {
     }
 
     public BakedModel getDisplayModel(MinecraftClient client) {
-        if (displayModel == null && displayDescription.displaysicon) {
+        if (displayModel == null && displayDescription.displaysicon && displayStack != null) {
             if (displayDescription.isFieldBlank(displayDescription.model))
                 displayModel = client.getItemRenderer().getModel(displayStack, null, client.player, 0);
 

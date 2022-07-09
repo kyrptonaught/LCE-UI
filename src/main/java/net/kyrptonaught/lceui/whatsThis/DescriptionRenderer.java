@@ -38,7 +38,6 @@ public class DescriptionRenderer {
     private static final Identifier BR = new Identifier(LCEUIMod.MOD_ID, "textures/gui/whatsthis/popup/br.png");
 
     public static DescriptionInstance renderingDescription;
-    public static float renderedTicks;
 
     public static boolean setToRender(DescriptionInstance descriptionInstance, boolean bypassViewedCheck) {
         if (renderingDescription != null || descriptionInstance == null)
@@ -46,9 +45,9 @@ public class DescriptionRenderer {
 
         if (!bypassViewedCheck) {
             String key = descriptionInstance.getGroupKey();
-            if (WhatsThisInit.viewedBlocks.contains(key))
+            if (WhatsThisInit.descriptionManager.viewedDescriptions.contains(key))
                 return false;
-            WhatsThisInit.viewedBlocks.add(key);
+            WhatsThisInit.descriptionManager.viewedDescriptions.add(key);
         }
 
         renderingDescription = descriptionInstance;
@@ -59,14 +58,14 @@ public class DescriptionRenderer {
         if (renderingDescription == null) return;
 
         if (!client.isPaused())
-            renderedTicks += delta;
-        if (renderedTicks > 200) {
+            renderingDescription.tickOpen();
+
+        if (renderingDescription.shouldClose(client)) {
             renderingDescription = null;
-            renderedTicks = 0;
             return;
         }
 
-        if (!client.isPaused() && (client.options.debugEnabled || client.currentScreen != null)) return;
+        if (renderingDescription.shouldHide(client)) return;
 
         int x = client.getWindow().getScaledWidth() - 220 - 20;
 
@@ -87,42 +86,50 @@ public class DescriptionRenderer {
 
         renderBackground(matrixStack, x, y, 200 + 20, totalHeight);
 
-        DrawableHelper.drawTextWithShadow(matrixStack, textRenderer, titleText, x + 15, 35, 0xFFFFFF);
+        //DrawableHelper.drawTextWithShadow(matrixStack, textRenderer, titleText, x + 15, 35, 0xFFFFFF);
+        textRenderer.draw(matrixStack, titleText, x + 15.5f, 35.5f, 0x000000);
+        textRenderer.draw(matrixStack, titleText, x + 15, 35, 0xFFFFFF);
         for (int i = 0; i < description.size(); i++)
             textRenderer.draw(matrixStack, description.get(i), x + 15, 47.5f + (i * 11), 0xFFFFFF);
 
         if (displayModel) {
-            matrixStack.translate(x + 103 - 1, 15 + lineHeight + 5 - 1, 1);
-            matrixStack.scale(1.5f, 1.5f, 1.5f);
-            matrixStack.translate(-(x + 103 - 1) - 3, -(15 + lineHeight + 5 - 1) - 3, 1);
+            float scale = 1.8f;
+            int halfSize = 18 / 2;
+            x += 103;
+            y = 21 + lineHeight;
+            matrixStack.translate(x + halfSize, y + halfSize, 1);
+            matrixStack.scale(scale, scale, scale);
+            matrixStack.translate(-(x + halfSize), -(y + halfSize), 1);
+
             RenderSystem.setShaderTexture(0, slot);
-            DrawableHelper.drawTexture(matrixStack, x + 103 - 1, 15 + lineHeight + 5 - 1, 0, 0, 18, 18, 128, 128);
-            renderGuiItemModel(client.getTextureManager(), client.getItemRenderer(), stack, x + 103, 15 + lineHeight + 5, model);
+
+            DrawableHelper.drawTexture(matrixStack, x, y, 0, 0, 18, 18, 18, 18);
+            renderGuiItemModel(client.getTextureManager(), client.getItemRenderer(), stack, x + 1, y + 1, scale, model);
         }
     }
 
     private static void renderBackground(MatrixStack matrices, int x, int y, int width, int height) {
-        drawTexture(matrices, x, y, 8, 8, TL);
-        drawTexture(matrices, x + 8, y, width - 16, 8, TM);
-        drawTexture(matrices, x + width - 8, y, 8, 8, TR);
+        drawTexture(matrices, x, y, 7, 7, TL);
+        drawTexture(matrices, x + 7, y, width - 14, 7, TM);
+        drawTexture(matrices, x + width - 7, y, 7, 7, TR);
 
-        y = y + 8;
-        drawTexture(matrices, x, y, 8, height - 16, ML);
-        drawTexture(matrices, x + 8, y, width - 16, height - 16, MM);
-        drawTexture(matrices, x + width - 8, y, 8, height - 16, MR);
+        y = y + 7;
+        drawTexture(matrices, x, y, 7, height - 14, ML);
+        drawTexture(matrices, x + 7, y, width - 14, height - 14, MM);
+        drawTexture(matrices, x + width - 7, y, 7, height - 14, MR);
 
-        y = y + height - 16;
-        drawTexture(matrices, x, y, 8, 8, BL);
-        drawTexture(matrices, x + 8, y, width - 16, 8, BM);
-        drawTexture(matrices, x + width - 8, y, 8, 8, BR);
+        y = y + height - 14;
+        drawTexture(matrices, x, y, 7, 7, BL);
+        drawTexture(matrices, x + 7, y, width - 14, 7, BM);
+        drawTexture(matrices, x + width - 7, y, 7, 7, BR);
     }
 
     private static void drawTexture(MatrixStack matrices, int x, int y, int width, int height, Identifier texture) {
         RenderSystem.setShaderTexture(0, texture);
-        DrawableHelper.drawTexture(matrices, x, y, 0, 0, width, height, 8, 8);
+        DrawableHelper.drawTexture(matrices, x, y, 0, 0, width, height, 7, 7);
     }
 
-    private static void renderGuiItemModel(TextureManager textureManager, ItemRenderer itemRenderer, ItemStack stack, int x, int y, BakedModel bakedModel) {
+    private static void renderGuiItemModel(TextureManager textureManager, ItemRenderer itemRenderer, ItemStack stack, float x, float y, float scale, BakedModel bakedModel) {
         itemRenderer.zOffset = bakedModel.hasDepth() ? itemRenderer.zOffset + 50.0f + (float) 0 : itemRenderer.zOffset + 50.0f;
 
         boolean sideLit = !bakedModel.isSideLit();
@@ -136,7 +143,7 @@ public class DescriptionRenderer {
         matrixStack.translate(x, y, 100.0f + itemRenderer.zOffset);
         matrixStack.translate(8.0, 8.0, 0.0);
         matrixStack.scale(1.0f, -1.0f, 1.0f);
-        matrixStack.scale(16.0f + 8, 16.0f + 8, 16.0f);
+        matrixStack.scale(16.0f * scale, 16.0f * scale, 16.0f);
         RenderSystem.applyModelViewMatrix();
         MatrixStack matrixStack2 = new MatrixStack();
         VertexConsumerProvider.Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();

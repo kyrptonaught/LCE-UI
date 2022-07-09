@@ -1,6 +1,5 @@
 package net.kyrptonaught.lceui.whatsThis;
 
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.Command;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
@@ -10,32 +9,32 @@ import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.kyrptonaught.lceui.LCEUIMod;
+import net.kyrptonaught.lceui.whatsThis.resourceloaders.DescriptionResourceLoader;
+import net.kyrptonaught.lceui.whatsThis.resourceloaders.ModelResourceLoader;
+import net.kyrptonaught.lceui.whatsThis.resourceloaders.TagResourceLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.ItemStack;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.registry.Registry;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
 public class WhatsThisInit {
-    public static HashMap<Identifier, ItemDescription> itemDescriptions = new HashMap<>();
-    public static HashSet<String> viewedBlocks = new HashSet<>();
+    public static DescriptionManager descriptionManager;
     public static KeyBinding invBind;
 
     public static void init() {
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new ResourceLoader());
-        ModelLoadingRegistry.INSTANCE.registerModelProvider(ResourceLoader::loadModels);
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new TagResourceLoader());
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new DescriptionResourceLoader());
+        ModelLoadingRegistry.INSTANCE.registerModelProvider(ModelResourceLoader::loadModels);
+
+        descriptionManager = new DescriptionManager();
 
         ClientTickEvents.END_WORLD_TICK.register(world -> {
             MinecraftClient client = MinecraftClient.getInstance();
@@ -71,18 +70,25 @@ public class WhatsThisInit {
         ClientCommandManager.DISPATCHER.register(
                 ClientCommandManager.literal(LCEUIMod.MOD_ID)
                         .then(ClientCommandManager.literal("whatsthis")
-                                .then(ClientCommandManager.literal("clearAllViewedBlocks")
-                                        .executes(context -> {
-                                            viewedBlocks.clear();
-                                            return Command.SINGLE_SUCCESS;
-                                        }))
-                                .then(ClientCommandManager.literal("clearViewedBlock")
-                                        .then(ClientCommandManager.argument("block", ViewedBlockArgumentType.viewedBlockArgumentType())
+                                .then(ClientCommandManager.literal("descriptions")
+                                        .then(ClientCommandManager.literal("clearAll")
                                                 .executes(context -> {
-                                                    Identifier id = ViewedBlockArgumentType.getViewedBlockArgumentType(context, "block");
-                                                    viewedBlocks.remove(id.toString());
+                                                    int count = descriptionManager.viewedDescriptions.size();
+                                                    descriptionManager.viewedDescriptions.clear();
+                                                    context.getSource().sendFeedback(new TranslatableText("key.lceui.whatsthis.feedback.clearall", count));
                                                     return Command.SINGLE_SUCCESS;
-                                                })))));
+                                                }))
+                                        .then(ClientCommandManager.literal("clear")
+                                                .then(ClientCommandManager.argument("block", ViewedBlockArgumentType.viewedBlockArgumentType())
+                                                        .executes(context -> {
+                                                            Identifier id = ViewedBlockArgumentType.getViewedBlockArgumentType(context, "block");
+                                                            boolean removed = descriptionManager.viewedDescriptions.remove(id.toString());
+                                                            if (removed)
+                                                                context.getSource().sendFeedback(new TranslatableText("key.lceui.whatsthis.feedback.cleared", id));
+                                                            else
+                                                                context.getSource().sendFeedback(new TranslatableText("key.lceui.whatsthis.feedback.notfound", id));
+                                                            return Command.SINGLE_SUCCESS;
+                                                        }))))));
 
         invBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.lceui.whatsthis",
@@ -98,74 +104,6 @@ public class WhatsThisInit {
             return false;
 
         return key.getCode() == pressedKeyCode;
-    }
-
-    public static ItemDescription getDescriptionForEntity(EntityType<?> entity) {
-        Identifier id = Registry.ENTITY_TYPE.getId(entity);
-        id = new Identifier(id.getNamespace(), "entity/" + id.getPath());
-        ItemDescription blockDescription = itemDescriptions.getOrDefault(id, new ItemDescription());
-
-        return getDescription(id, blockDescription, entity.getTranslationKey());
-    }
-
-    public static ItemDescription getDescriptionForBlock(BlockState blockState) {
-        Identifier id = Registry.BLOCK.getId(blockState.getBlock());
-        id = new Identifier(id.getNamespace(), "block/" + id.getPath());
-        ItemDescription blockDescription = itemDescriptions.getOrDefault(id, new ItemDescription());
-
-        return getDescription(id, blockDescription, blockState.getBlock().getTranslationKey());
-    }
-
-    public static ItemDescription getDescriptionForItem(ItemStack itemStack) {
-        Identifier id = Registry.ITEM.getId(itemStack.getItem());
-        id = new Identifier(id.getNamespace(), "item/" + id.getPath());
-        ItemDescription itemDescription = itemDescriptions.getOrDefault(id, new ItemDescription());
-
-        return getDescription(id, itemDescription, itemStack.getTranslationKey());
-    }
-
-    private static ItemDescription getDescription(Identifier itemID, ItemDescription itemDescription, String defaultKey) {
-        tryInherit(itemID, itemDescription, new HashSet<>());
-
-        if (itemDescription.isFieldBlank(itemDescription.text.name)) {
-            itemDescription.text.name = defaultKey;
-        }
-        if (itemDescription.isFieldBlank(itemDescription.text.description)) {
-            itemDescription.text.description = defaultKey + ".description";
-        }
-        if (itemDescription.displaysicon == null)
-            itemDescription.displaysicon = true;
-
-        if (itemDescription.isFieldBlank(itemDescription.group)) {
-            itemDescription.group = itemID.toString();
-        }
-        return itemDescription;
-    }
-
-    public static void tryInherit(Identifier id, ItemDescription itemDescription, HashSet<Identifier> trace) {
-        if (trace.contains(id)) {
-            System.out.println("Loop detected! " + trace);
-            return;
-        }
-        trace.add(id);
-        if (!itemDescription.isFieldBlank(itemDescription.parent)) {
-            Identifier parentID = itemDescription.getParent();
-            ItemDescription parent = itemDescriptions.get(parentID);
-            if (parent == null) {
-                if (id.getPath().contains("block"))
-                    parent = getDescriptionForBlock(Registry.BLOCK.get(getCleanIdentifier(parentID)).getDefaultState());
-                else if (id.getPath().contains("item"))
-                    parent = getDescriptionForItem(Registry.ITEM.get(getCleanIdentifier(parentID)).getDefaultStack());
-                else if (id.getPath().contains("entity"))
-                    parent = getDescriptionForEntity(Registry.ENTITY_TYPE.get(getCleanIdentifier(id)));
-            }
-            if (parent != null) {
-                tryInherit(parentID, parent, trace);
-                itemDescription.copyFrom(parent);
-            } else {
-                System.out.println("Parent does not exist for Item " + id + " : " + parentID);
-            }
-        }
     }
 
     public static Identifier getCleanIdentifier(Identifier identifier) {
