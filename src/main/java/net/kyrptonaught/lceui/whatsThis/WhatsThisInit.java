@@ -2,7 +2,8 @@ package net.kyrptonaught.lceui.whatsThis;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.Command;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
@@ -18,7 +19,8 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.text.TranslatableText;
+
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -67,15 +69,15 @@ public class WhatsThisInit {
             matrixStack.pop();
         });
 
-        ClientCommandManager.DISPATCHER.register(
-                ClientCommandManager.literal(LCEUIMod.MOD_ID)
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) ->
+                dispatcher.register(ClientCommandManager.literal(LCEUIMod.MOD_ID)
                         .then(ClientCommandManager.literal("whatsthis")
                                 .then(ClientCommandManager.literal("descriptions")
                                         .then(ClientCommandManager.literal("clearAll")
                                                 .executes(context -> {
                                                     int count = descriptionManager.viewedDescriptions.size();
                                                     descriptionManager.viewedDescriptions.clear();
-                                                    context.getSource().sendFeedback(new TranslatableText("key.lceui.whatsthis.feedback.clearall", count));
+                                                    context.getSource().sendFeedback(Text.translatable("key.lceui.whatsthis.feedback.clearall", count));
                                                     return Command.SINGLE_SUCCESS;
                                                 }))
                                         .then(ClientCommandManager.literal("clear")
@@ -84,11 +86,11 @@ public class WhatsThisInit {
                                                             Identifier id = ViewedBlockArgumentType.getViewedBlockArgumentType(context, "block");
                                                             boolean removed = descriptionManager.viewedDescriptions.remove(id.toString());
                                                             if (removed)
-                                                                context.getSource().sendFeedback(new TranslatableText("key.lceui.whatsthis.feedback.cleared", id));
+                                                                context.getSource().sendFeedback(Text.translatable("key.lceui.whatsthis.feedback.cleared", id));
                                                             else
-                                                                context.getSource().sendFeedback(new TranslatableText("key.lceui.whatsthis.feedback.notfound", id));
+                                                                context.getSource().sendFeedback(Text.translatable("key.lceui.whatsthis.feedback.notfound", id));
                                                             return Command.SINGLE_SUCCESS;
-                                                        }))))));
+                                                        })))))));
 
         invBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.lceui.whatsthis",

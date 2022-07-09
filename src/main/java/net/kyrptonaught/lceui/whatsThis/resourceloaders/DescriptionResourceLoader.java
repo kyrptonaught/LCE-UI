@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.kyrptonaught.lceui.LCEUIMod;
 import net.kyrptonaught.lceui.whatsThis.ItemDescription;
 import net.kyrptonaught.lceui.whatsThis.WhatsThisInit;
+import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 public class DescriptionResourceLoader implements SimpleSynchronousResourceReloadListener {
     public static final Identifier ID = new Identifier(LCEUIMod.MOD_ID, "descriptions");
@@ -33,11 +35,11 @@ public class DescriptionResourceLoader implements SimpleSynchronousResourceReloa
     @Override
     public void reload(ResourceManager manager) {
         WhatsThisInit.descriptionManager.clearDescriptions();
-        Collection<Identifier> resources = manager.findResources(ID.getPath(), (string) -> string.endsWith(".json"));
-        for (Identifier id : resources) {
+        Map<Identifier, Resource> resources = manager.findResources(ID.getPath(), (string) -> string.getPath().endsWith(".json"));
+        for (Identifier id : resources.keySet()) {
             if (id.getNamespace().equals(ID.getNamespace()) && id.getPath().contains("/block") || id.getPath().contains("/item") || id.getPath().contains("/entity"))
                 try {
-                    JsonObject jsonObj = (JsonObject) JsonParser.parseReader(new InputStreamReader(manager.getResource(id).getInputStream()));
+                    JsonObject jsonObj = (JsonObject) JsonParser.parseReader(new InputStreamReader(resources.get(id).getInputStream()));
                     ItemDescription itemDescription = GSON.fromJson(jsonObj, ItemDescription.class);
                     String fileName = id.getPath().substring(id.getPath().lastIndexOf("/") + 1).replace(".json", "");
                     if (id.getPath().contains("/block"))

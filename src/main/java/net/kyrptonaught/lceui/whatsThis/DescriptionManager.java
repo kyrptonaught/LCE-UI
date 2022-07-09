@@ -3,20 +3,16 @@ package net.kyrptonaught.lceui.whatsThis;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class DescriptionManager {
     public HashMap<Identifier, ItemDescription> itemDescriptions = new HashMap<>();
     public HashSet<String> viewedDescriptions = new HashSet<>();
 
-    public HashMap<Identifier, Tag<Identifier>> tags = new HashMap<>();
+    public HashMap<Identifier, Collection<Identifier>> tags = new HashMap<>();
 
     public void clearDescriptions() {
         itemDescriptions.clear();
@@ -26,14 +22,14 @@ public class DescriptionManager {
         tags.clear();
     }
 
-    public void setTags(Map<Identifier, Tag<Identifier>> tags) {
+    public void setTags(Map<Identifier, Collection<Identifier>> tags) {
         this.tags = new HashMap<>(tags);
     }
 
     public Optional<String> findTagForID(Identifier itemID) {
         itemID = WhatsThisInit.getCleanIdentifier(itemID);
         for (Identifier tagID : tags.keySet()) {
-            if (tags.get(tagID).values().contains(itemID))
+            if (tags.get(tagID).contains(itemID))
                 return Optional.of("#" + tagID.toString());
 
         }

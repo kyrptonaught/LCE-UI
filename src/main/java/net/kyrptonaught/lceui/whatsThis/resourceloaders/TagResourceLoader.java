@@ -4,10 +4,10 @@ import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.kyrptonaught.lceui.LCEUIMod;
 import net.kyrptonaught.lceui.whatsThis.WhatsThisInit;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagGroupLoader;
 import net.minecraft.util.Identifier;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,7 +29,7 @@ public class TagResourceLoader implements SimpleSynchronousResourceReloadListene
     @Override
     public void reload(ResourceManager manager) {
         WhatsThisInit.descriptionManager.clearTags();
-        Map<Identifier, Tag.Builder> tags = tagLoader.loadTags(manager);
+        Map<Identifier, List<TagGroupLoader.TrackedEntry>> tags = tagLoader.loadTags(manager);
         WhatsThisInit.descriptionManager.setTags(tagLoader.buildGroup(tags));
     }
 }

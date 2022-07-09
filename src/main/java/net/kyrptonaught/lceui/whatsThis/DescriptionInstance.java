@@ -10,7 +10,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.TranslatableText;
+
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -87,11 +88,11 @@ public class DescriptionInstance {
     }
 
     public MutableText getNameTranslation() {
-        return new TranslatableText(displayDescription.text.name);
+        return Text.translatable(displayDescription.text.name);
     }
 
     public MutableText getDescTranslation() {
-        return new TranslatableText(displayDescription.text.description);
+        return Text.translatable(displayDescription.text.description);
     }
 
     public ItemStack getItemStack() {

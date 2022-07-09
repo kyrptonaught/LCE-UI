@@ -6,7 +6,7 @@ import net.minecraft.client.gui.RotatingCubeMapRenderer;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
@@ -22,8 +22,8 @@ public class LegacyTitleScreen extends TitleScreen {
         backgroundRenderer = new RotatingCubeMapRenderer(PANORAMA_CUBE_MAP);
         int y = this.height / 4 + 48;
         int spacingY = 24;
-        this.addDrawableChild(new LegacyButton(this.width / 2 - 100, y, 200, 20, new LiteralText("Play Game"), button -> this.client.setScreen(new SelectWorldScreen(this))));
-        this.addDrawableChild(new LegacyButton(this.width / 2 - 100, y + spacingY * 1, 200, 20, new LiteralText("Mini Games"), button -> this.client.setScreen(new SelectWorldScreen(this))));
+        this.addDrawableChild(new LegacyButton(this.width / 2 - 100, y, 200, 20, Text.literal("Play Game"), button -> this.client.setScreen(new SelectWorldScreen(this))));
+        this.addDrawableChild(new LegacyButton(this.width / 2 - 100, y + spacingY * 1, 200, 20, Text.literal("Mini Games"), button -> this.client.setScreen(new SelectWorldScreen(this))));
     }
 
     @Override
