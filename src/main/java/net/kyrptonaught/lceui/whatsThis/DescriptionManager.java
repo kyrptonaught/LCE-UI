@@ -65,8 +65,10 @@ public class DescriptionManager {
     }
 
     private ItemDescription getDescription(Identifier itemID, ItemDescription itemDescription, String defaultKey, Boolean defaultIconDisplay) {
-        tryInherit(itemID, itemDescription, new HashSet<>());
+        if (itemDescription.initialized)
+            return itemDescription;
 
+        tryInherit(itemID, itemDescription, new HashSet<>());
         if (itemDescription.isFieldBlank(itemDescription.text.name)) {
             itemDescription.text.name = defaultKey;
         }
@@ -79,6 +81,7 @@ public class DescriptionManager {
         if (itemDescription.isFieldBlank(itemDescription.group)) {
             itemDescription.group = findTagForID(itemID).orElse(itemID.toString());
         }
+        itemDescription.initialized = true;
         return itemDescription;
     }
 
@@ -92,12 +95,12 @@ public class DescriptionManager {
             Identifier parentID = itemDescription.getParent();
             ItemDescription parent = itemDescriptions.get(parentID);
             if (parent == null) {
-                if (id.getPath().contains("block"))
+                if (parentID.getPath().contains("block/"))
                     parent = getDescriptionForBlock(Registry.BLOCK.get(WhatsThisInit.getCleanIdentifier(parentID)).getDefaultState());
-                else if (id.getPath().contains("item"))
+                else if (parentID.getPath().contains("item/"))
                     parent = getDescriptionForItem(Registry.ITEM.get(WhatsThisInit.getCleanIdentifier(parentID)).getDefaultStack());
-                else if (id.getPath().contains("entity"))
-                    parent = getDescriptionForEntity(Registry.ENTITY_TYPE.get(WhatsThisInit.getCleanIdentifier(id)));
+                else if (parentID.getPath().contains("entity/"))
+                    parent = getDescriptionForEntity(Registry.ENTITY_TYPE.get(WhatsThisInit.getCleanIdentifier(parentID)));
             }
             if (parent != null) {
                 tryInherit(parentID, parent, trace);

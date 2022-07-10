@@ -10,6 +10,8 @@ public class ItemDescription {
 
     TextTranslations text = new TextTranslations();
 
+    boolean initialized = false;
+
     public boolean isFieldBlank(String field) {
         return field == null || field.isEmpty() || field.isBlank();
     }

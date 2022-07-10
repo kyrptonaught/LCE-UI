@@ -35,16 +35,16 @@ public class DescriptionResourceLoader implements SimpleSynchronousResourceReloa
         WhatsThisInit.descriptionManager.clearDescriptions();
         Collection<Identifier> resources = manager.findResources(ID.getPath(), (string) -> string.endsWith(".json"));
         for (Identifier id : resources) {
-            if (id.getNamespace().equals(ID.getNamespace()) && id.getPath().contains("/block") || id.getPath().contains("/item") || id.getPath().contains("/entity"))
+            if (id.getNamespace().equals(ID.getNamespace()) && id.getPath().contains("/block/") || id.getPath().contains("/item/") || id.getPath().contains("/entity/"))
                 try {
                     JsonObject jsonObj = (JsonObject) JsonParser.parseReader(new InputStreamReader(manager.getResource(id).getInputStream()));
                     ItemDescription itemDescription = GSON.fromJson(jsonObj, ItemDescription.class);
                     String fileName = id.getPath().substring(id.getPath().lastIndexOf("/") + 1).replace(".json", "");
-                    if (id.getPath().contains("/block"))
+                    if (id.getPath().contains("/block/"))
                         fileName = "block/" + fileName;
-                    else if (id.getPath().contains("/item"))
+                    else if (id.getPath().contains("/item/"))
                         fileName = "item/" + fileName;
-                    else if (id.getPath().contains("/entity"))
+                    else if (id.getPath().contains("/entity/"))
                         fileName = "entity/" + fileName;
 
                     Identifier name = new Identifier(fileName);

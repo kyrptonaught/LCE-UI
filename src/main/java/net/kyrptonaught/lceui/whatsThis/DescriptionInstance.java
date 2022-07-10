@@ -21,7 +21,7 @@ public class DescriptionInstance {
     private BakedModel displayModel;
 
     private Screen boundToScreen;
-    private int openTicks = 140;
+    private long remainingOpenTicks = 140;
 
 
     public static DescriptionInstance ofItem(ItemStack stack) {
@@ -65,8 +65,12 @@ public class DescriptionInstance {
         return this;
     }
 
+    public boolean canSwapEarly() {
+        return remainingOpenTicks <= 2;
+    }
+
     public void tickOpen() {
-        openTicks--;
+        remainingOpenTicks--;
     }
 
     public boolean shouldHide(MinecraftClient client) {
@@ -74,7 +78,7 @@ public class DescriptionInstance {
     }
 
     public boolean shouldClose(MinecraftClient client) {
-        if (openTicks <= 0) return true;
+        if (remainingOpenTicks < 0) return true;
 
         if (boundToScreen == null) {
             return client.currentScreen instanceof HandledScreen<?>;

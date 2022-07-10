@@ -1,6 +1,5 @@
 package net.kyrptonaught.lceui.whatsThis;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.Command;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -27,6 +26,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class WhatsThisInit {
     public static DescriptionManager descriptionManager;
+    public static DescriptionRenderer descriptionRenderer;
     public static KeyBinding invBind;
 
     public static void init() {
@@ -35,6 +35,7 @@ public class WhatsThisInit {
         ModelLoadingRegistry.INSTANCE.registerModelProvider(ModelResourceLoader::loadModels);
 
         descriptionManager = new DescriptionManager();
+        descriptionRenderer = new DescriptionRenderer();
 
         ClientTickEvents.END_WORLD_TICK.register(world -> {
             MinecraftClient client = MinecraftClient.getInstance();
@@ -43,28 +44,21 @@ public class WhatsThisInit {
                 if (hit instanceof BlockHitResult blockHitResult) {
                     BlockState state = world.getBlockState(blockHitResult.getBlockPos());
                     if (!state.isAir()) {
-                        DescriptionRenderer.setToRender(DescriptionInstance.ofBlock(world, blockHitResult.getBlockPos(), state), false);
+                        descriptionRenderer.setToRender(DescriptionInstance.ofBlock(world, blockHitResult.getBlockPos(), state), false);
                     }
                 } else if (hit instanceof EntityHitResult entityHitResult) {
                     Entity entity = entityHitResult.getEntity();
                     if (entity.isAlive()) {
-                        DescriptionRenderer.setToRender(DescriptionInstance.ofEntity(entity), false);
+                        descriptionRenderer.setToRender(DescriptionInstance.ofEntity(entity), false);
                     }
                 }
             }
+            descriptionRenderer.tick();
         });
 
         HudRenderCallback.EVENT.register((matrixStack, tickDelta) -> {
             MinecraftClient client = MinecraftClient.getInstance();
-
-            matrixStack.push();
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-
-            DescriptionRenderer.renderDescription(client, matrixStack, tickDelta);
-
-            RenderSystem.disableBlend();
-            matrixStack.pop();
+            descriptionRenderer.renderDescription(client, matrixStack, tickDelta);
         });
 
         ClientCommandManager.DISPATCHER.register(
@@ -81,8 +75,8 @@ public class WhatsThisInit {
                                         .then(ClientCommandManager.literal("clear")
                                                 .then(ClientCommandManager.argument("block", ViewedBlockArgumentType.viewedBlockArgumentType())
                                                         .executes(context -> {
-                                                            Identifier id = ViewedBlockArgumentType.getViewedBlockArgumentType(context, "block");
-                                                            boolean removed = descriptionManager.viewedDescriptions.remove(id.toString());
+                                                            String id = ViewedBlockArgumentType.getViewedBlockArgumentType(context, "block");
+                                                            boolean removed = descriptionManager.viewedDescriptions.remove(id);
                                                             if (removed)
                                                                 context.getSource().sendFeedback(new TranslatableText("key.lceui.whatsthis.feedback.cleared", id));
                                                             else

@@ -37,10 +37,12 @@ public class DescriptionRenderer {
     private static final Identifier BM = new Identifier(LCEUIMod.MOD_ID, "textures/gui/whatsthis/popup/bm.png");
     private static final Identifier BR = new Identifier(LCEUIMod.MOD_ID, "textures/gui/whatsthis/popup/br.png");
 
-    public static DescriptionInstance renderingDescription;
+    public DescriptionInstance renderingDescription;
 
-    public static boolean setToRender(DescriptionInstance descriptionInstance, boolean bypassViewedCheck) {
-        if (renderingDescription != null || descriptionInstance == null)
+    public boolean setToRender(DescriptionInstance descriptionInstance, boolean bypassViewedCheck) {
+        if (descriptionInstance == null) return false;
+
+        if (!bypassViewedCheck && renderingDescription != null && !renderingDescription.canSwapEarly()) //display the next description without closing the previous
             return false;
 
         if (!bypassViewedCheck) {
@@ -54,11 +56,13 @@ public class DescriptionRenderer {
         return true;
     }
 
-    public static void renderDescription(MinecraftClient client, MatrixStack matrixStack, float delta) {
-        if (renderingDescription == null) return;
-
-        if (!client.isPaused())
+    public void tick() {
+        if (renderingDescription != null)
             renderingDescription.tickOpen();
+    }
+
+    public void renderDescription(MinecraftClient client, MatrixStack matrixStack, float delta) {
+        if (renderingDescription == null) return;
 
         if (renderingDescription.shouldClose(client)) {
             renderingDescription = null;
@@ -70,11 +74,18 @@ public class DescriptionRenderer {
         int x = client.getWindow().getScaledWidth() - 220 - 20;
 
         BakedModel bakedModel = renderingDescription.getDisplayModel(client);
+        matrixStack.push();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableDepthTest();
 
         render(client, matrixStack, x, 20, renderingDescription.getNameTranslation(), renderingDescription.getDescTranslation(), renderingDescription.getItemStack(), bakedModel, bakedModel != null);
+
+        RenderSystem.disableBlend();
+        matrixStack.pop();
     }
 
-    private static void render(MinecraftClient client, MatrixStack matrixStack, int x, int y, Text titleText, Text descriptionText, ItemStack stack, BakedModel model, boolean displayModel) {
+    private void render(MinecraftClient client, MatrixStack matrixStack, int x, int y, Text titleText, Text descriptionText, ItemStack stack, BakedModel model, boolean displayModel) {
         TextRenderer textRenderer = client.textRenderer;
 
         List<OrderedText> description = textRenderer.wrapLines(descriptionText, 200);
@@ -108,7 +119,7 @@ public class DescriptionRenderer {
         }
     }
 
-    private static void renderBackground(MatrixStack matrices, int x, int y, int width, int height) {
+    private void renderBackground(MatrixStack matrices, int x, int y, int width, int height) {
         drawTexture(matrices, x, y, 7, 7, TL);
         drawTexture(matrices, x + 7, y, width - 14, 7, TM);
         drawTexture(matrices, x + width - 7, y, 7, 7, TR);
@@ -124,12 +135,12 @@ public class DescriptionRenderer {
         drawTexture(matrices, x + width - 7, y, 7, 7, BR);
     }
 
-    private static void drawTexture(MatrixStack matrices, int x, int y, int width, int height, Identifier texture) {
+    private void drawTexture(MatrixStack matrices, int x, int y, int width, int height, Identifier texture) {
         RenderSystem.setShaderTexture(0, texture);
         DrawableHelper.drawTexture(matrices, x, y, 0, 0, width, height, 7, 7);
     }
 
-    private static void renderGuiItemModel(TextureManager textureManager, ItemRenderer itemRenderer, ItemStack stack, float x, float y, float scale, BakedModel bakedModel) {
+    private void renderGuiItemModel(TextureManager textureManager, ItemRenderer itemRenderer, ItemStack stack, float x, float y, float scale, BakedModel bakedModel) {
         itemRenderer.zOffset = bakedModel.hasDepth() ? itemRenderer.zOffset + 50.0f + (float) 0 : itemRenderer.zOffset + 50.0f;
 
         boolean sideLit = !bakedModel.isSideLit();

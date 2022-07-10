@@ -22,7 +22,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Environment(EnvType.CLIENT)
 @Mixin(HandledScreen.class)
 public class HandledScreenMixin extends Screen {
-    private float shiftAmount;
+
+    DescriptionRenderer descriptionRenderer;
+
     @Shadow
     @Nullable
     protected Slot focusedSlot;
@@ -40,7 +42,7 @@ public class HandledScreenMixin extends Screen {
             return;
         if (WhatsThisInit.isKeybindPressed(button, InputUtil.Type.MOUSE)) {
             if (focusedSlot != null && !focusedSlot.getStack().isEmpty()) {
-                DescriptionRenderer.setToRender(DescriptionInstance.ofItem(focusedSlot.getStack()), true);
+                //  DescriptionRenderer.setToRender(DescriptionInstance.ofItem(focusedSlot.getStack().copy()), true);
             }
             callbackInfoReturnable.setReturnValue(true);
         }
@@ -52,7 +54,8 @@ public class HandledScreenMixin extends Screen {
             return;
         if (WhatsThisInit.isKeybindPressed(keycode, InputUtil.Type.KEYSYM)) {
             if (focusedSlot != null && !focusedSlot.getStack().isEmpty()) {
-                DescriptionRenderer.setToRender(DescriptionInstance.ofItem(focusedSlot.getStack()), true);
+                if (descriptionRenderer == null) descriptionRenderer = new DescriptionRenderer();
+                descriptionRenderer.setToRender(DescriptionInstance.ofItem(focusedSlot.getStack().copy()).bindToScreen(this), true);
                 // shiftAmount = x;
                 //shiftAmount = Math.max(25, this.x - 100);
                 //shiftAmount = 250;
@@ -63,13 +66,21 @@ public class HandledScreenMixin extends Screen {
         }
     }
 
+    @Inject(method = "tick", at = @At(value = "TAIL"))
+    public void tickDescription(CallbackInfo ci) {
+        if (descriptionRenderer != null)
+            descriptionRenderer.tick();
+    }
+
     @Inject(method = "render", at = @At(value = "HEAD"))
     public void fixRender(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        matrices.translate(-shiftAmount, 0, 0);
+        //matrices.translate(-shiftAmount, 0, 0);
     }
 
     @Inject(method = "render", at = @At(value = "TAIL"))
     public void fixRender2(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        matrices.translate(shiftAmount, 0, 0);
+        if (descriptionRenderer != null)
+            descriptionRenderer.renderDescription(this.client, matrices, delta);
+        //matrices.translate(shiftAmount, 0, 0);
     }
 }
