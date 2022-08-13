@@ -2,6 +2,7 @@ package net.kyrptonaught.lceui;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.kyrptonaught.kyrptconfig.config.ConfigManager;
+import net.kyrptonaught.lceui.creativeInv.CreativeInvInit;
 import net.kyrptonaught.lceui.whatsThis.WhatsThisInit;
 
 
@@ -12,7 +13,8 @@ public class LCEUIMod implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        configManager.load();
         WhatsThisInit.init();
+        CreativeInvInit.init();
+        configManager.load();
     }
 }

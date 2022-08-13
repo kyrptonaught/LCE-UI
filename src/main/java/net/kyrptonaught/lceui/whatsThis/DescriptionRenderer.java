@@ -140,7 +140,7 @@ public class DescriptionRenderer {
         DrawableHelper.drawTexture(matrices, x, y, 0, 0, width, height, 7, 7);
     }
 
-    private void renderGuiItemModel(TextureManager textureManager, ItemRenderer itemRenderer, ItemStack stack, float x, float y, float scale, BakedModel bakedModel) {
+    public static void renderGuiItemModel(TextureManager textureManager, ItemRenderer itemRenderer, ItemStack stack, float x, float y, float scale, BakedModel bakedModel) {
         itemRenderer.zOffset = bakedModel.hasDepth() ? itemRenderer.zOffset + 50.0f + (float) 0 : itemRenderer.zOffset + 50.0f;
 
         boolean sideLit = !bakedModel.isSideLit();

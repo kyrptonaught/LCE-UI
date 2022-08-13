@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.loader.api.FabricLoader;
 import net.kyrptonaught.lceui.LCEUIMod;
 import net.kyrptonaught.lceui.whatsThis.resourceloaders.DescriptionResourceLoader;
 import net.kyrptonaught.lceui.whatsThis.resourceloaders.ModelResourceLoader;
@@ -90,6 +91,9 @@ public class WhatsThisInit {
                 GLFW.GLFW_KEY_N,
                 "key.categories.lceui"
         ));
+        FabricLoader.getInstance().getModContainer(LCEUIMod.MOD_ID).ifPresent(modContainer -> {
+            ResourceManagerHelper.registerBuiltinResourcePack(new Identifier(LCEUIMod.MOD_ID, "whatsthis"), "resourcepacks/WhatsThisDefault", modContainer, false);
+        });
     }
 
     public static boolean isKeybindPressed(int pressedKeyCode, InputUtil.Type type) {

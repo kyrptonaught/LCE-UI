@@ -3,6 +3,9 @@
   "package": "net.kyrptonaught.lceui.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "creativeinv.CreativeScreenMixin",
+    "creativeinv.ItemGroupMixin",
+    "creativeinv.ItemMixin",
     "titlescreen.TitleScreenMixin",
     "whatsthis.HandledScreenMixin"
   ],
