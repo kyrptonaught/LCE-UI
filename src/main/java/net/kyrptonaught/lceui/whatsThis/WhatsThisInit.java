@@ -64,16 +64,15 @@ public class WhatsThisInit {
 
         ClientCommandManager.DISPATCHER.register(
                 ClientCommandManager.literal(LCEUIMod.MOD_ID)
-                        .then(ClientCommandManager.literal("whatsthis")
                                 .then(ClientCommandManager.literal("descriptions")
-                                        .then(ClientCommandManager.literal("clearAll")
-                                                .executes(context -> {
+                                        .then(ClientCommandManager.literal("clear")
+                                                .then(ClientCommandManager.literal("all")
+                                                    .executes(context -> {
                                                     int count = descriptionManager.viewedDescriptions.size();
                                                     descriptionManager.viewedDescriptions.clear();
                                                     context.getSource().sendFeedback(new TranslatableText("key.lceui.whatsthis.feedback.clearall", count));
                                                     return Command.SINGLE_SUCCESS;
                                                 }))
-                                        .then(ClientCommandManager.literal("clear")
                                                 .then(ClientCommandManager.argument("block", ViewedBlockArgumentType.viewedBlockArgumentType())
                                                         .executes(context -> {
                                                             String id = ViewedBlockArgumentType.getViewedBlockArgumentType(context, "block");
@@ -83,7 +82,7 @@ public class WhatsThisInit {
                                                             else
                                                                 context.getSource().sendFeedback(new TranslatableText("key.lceui.whatsthis.feedback.notfound", id));
                                                             return Command.SINGLE_SUCCESS;
-                                                        }))))));
+                                                        })))));
 
         invBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.lceui.whatsthis",
